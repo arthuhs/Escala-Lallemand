@@ -7,26 +7,31 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Minha Escala 3x3</title>
     <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; background-color: #f4f4f9; margin: 0; padding-top: 20px; }
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; background-color: #f4f4f9; margin: 0; padding-top: 20px; padding-bottom: 40px; }
         .calendar-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 320px; box-sizing: border-box; }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-        .day { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold; border: 1px solid #ddd; box-sizing: border-box; }
-        .weekday { font-size: 0.8rem; color: #666; border: none; font-weight: normal; }
+        .day { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold; border: 1px solid #ddd; box-sizing: border-box; cursor: pointer; }
+        .weekday { font-size: 0.8rem; color: #666; border: none; font-weight: normal; cursor: default; }
         
-        /* Cores da Escala Padrão */
+        /* Cores da Escala */
         .work { background-color: #2ecc71; color: white; border-color: #27ae60; }
         .off { background-color: #e74c3c; color: white; border-color: #c0392b; }
         
         /* Cores dos Feriados */
-        .holiday-work { background-color: #9b59b6; color: white; border-color: #8e44ad; } /* Roxo */
-        .holiday-off { background-color: #f1c40f; color: black; border-color: #f39c12; } /* Amarelo */
+        .holiday-work { background-color: #9b59b6; color: white; border-color: #8e44ad; }
+        .holiday-off { background-color: #f1c40f; color: black; border-color: #f39c12; }
         
-        .empty { border: none; }
-        .legend-container { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; width: 320px; }
-        .legend-row { display: flex; justify-content: space-around; }
-        .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.9rem; }
-        .box { width: 15px; height: 15px; border-radius: 3px; }
+        .empty { border: none; cursor: default; }
+        .legend-container, .holiday-list-container { margin-top: 20px; width: 320px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .legend-row { display: flex; justify-content: space-around; margin-bottom: 10px; }
+        .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.85rem; }
+        .box { width: 14px; height: 14px; border-radius: 3px; }
+        
+        .holiday-list-container h4 { margin: 0 0 10px 0; font-size: 0.9rem; color: #333; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .holiday-item { font-size: 0.85rem; margin-bottom: 5px; color: #555; display: flex; gap: 8px; }
+        .holiday-date { font-weight: bold; color: #3498db; min-width: 45px; }
+
         button { cursor: pointer; padding: 8px 15px; border: none; background: #3498db; color: white; border-radius: 4px; font-weight: bold; }
     </style>
 </head>
@@ -63,43 +68,53 @@
         </div>
     </div>
 
+    <div class="holiday-list-container" id="holidayListSection" style="display: none;">
+        <h4>Feriados do Mês</h4>
+        <div id="holidayListContent"></div>
+    </div>
+
     <script>
-        // Data base do ciclo: 09 de Maio de 2026
         const startDate = new Date(2026, 4, 9); 
         let currentDisplayDate = new Date(2026, 4, 1);
 
-        // Array com os feriados no formato "MÊS-DIA"
-        const feriados = [
-            "01-01", // Confraternização Universal
-            "02-17", // Carnaval
-            "04-03", // Paixão de Cristo (Sexta-feira Santa)
-            "04-21", // Tiradentes
-            "05-01", // Dia do Trabalhador
-            "05-24", // Aniversário da Cidade
-            "06-04", // Corpus Christi
-            "06-13", // Padroeiro Local
-            "09-07", // Independência do Brasil
-            "10-12", // Nossa Senhora Aparecida
-            "11-02", // Finados
-            "11-15", // Proclamação da República
-            "11-20", // Dia da Consciência Negra
-            "12-25"  // Natal
-        ];
+        // Objeto de Feriados: Chave é "MM-DD", Valor é o Nome
+        const feriados = {
+            "01-01": "Confraternização Universal",
+            "02-17": "Carnaval",
+            "04-03": "Paixão de Cristo",
+            "04-21": "Tiradentes",
+            "05-01": "Dia do Trabalhador",
+            "05-24": "Aniversário de Patos de Minas",
+            "06-04": "Corpus Christi",
+            "06-13": "Santo Antônio (Padroeiro)",
+            "09-07": "Independência do Brasil",
+            "10-12": "Nossa Senhora Aparecida",
+            "11-02": "Finados",
+            "11-15": "Proclamação da República",
+            "11-20": "Consciência Negra",
+            "12-25": "Natal"
+        };
 
         function renderCalendar() {
             const grid = document.getElementById('calendarGrid');
             const monthTitle = document.getElementById('monthTitle');
+            const holidayListSection = document.getElementById('holidayListSection');
+            const holidayListContent = document.getElementById('holidayListContent');
             
             const days = grid.querySelectorAll('.day:not(.weekday)');
             days.forEach(d => d.remove());
+            holidayListContent.innerHTML = "";
 
             const year = currentDisplayDate.getFullYear();
             const month = currentDisplayDate.getMonth();
             
-            monthTitle.innerText = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(currentDisplayDate);
+            const rawDateString = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(currentDisplayDate);
+            monthTitle.innerText = rawDateString.charAt(0).toUpperCase() + rawDateString.slice(1);
 
             const firstDayOfMonth = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            let hasHolidaysThisMonth = false;
 
             for (let i = 0; i < firstDayOfMonth; i++) {
                 const emptyDiv = document.createElement('div');
@@ -117,23 +132,24 @@
                 const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
                 const cyclePos = ((diffDays % 6) + 6) % 6;
 
-                // Formata o mês e dia atuais para verificar no Array (Ex: 05-24)
-                // O +1 é necessário porque os meses no JavaScript começam no 0 (Janeiro = 0)
-                const dataFormatada = String(month + 1).padStart(2, '0') + "-" + String(day).padStart(2, '0');
-                const isFeriado = feriados.includes(dataFormatada);
+                const key = String(month + 1).padStart(2, '0') + "-" + String(day).padStart(2, '0');
+                const nomeFeriado = feriados[key];
 
-                // Lógica de cores combinando Escala + Feriados
                 if (cyclePos >= 0 && cyclePos <= 2) {
-                    // Dia de trabalho
-                    if (isFeriado) {
+                    if (nomeFeriado) {
                         dayDiv.classList.add('holiday-work');
+                        dayDiv.onclick = () => alert(`Feriado: ${nomeFeriado}\nEscala: Trabalho`);
+                        addHolidayToList(day, nomeFeriado);
+                        hasHolidaysThisMonth = true;
                     } else {
                         dayDiv.classList.add('work');
                     }
                 } else {
-                    // Dia de folga
-                    if (isFeriado) {
+                    if (nomeFeriado) {
                         dayDiv.classList.add('holiday-off');
+                        dayDiv.onclick = () => alert(`Feriado: ${nomeFeriado}\nEscala: Folga`);
+                        addHolidayToList(day, nomeFeriado);
+                        hasHolidaysThisMonth = true;
                     } else {
                         dayDiv.classList.add('off');
                     }
@@ -141,6 +157,16 @@
 
                 grid.appendChild(dayDiv);
             }
+
+            holidayListSection.style.display = hasHolidaysThisMonth ? "block" : "none";
+        }
+
+        function addHolidayToList(day, name) {
+            const holidayListContent = document.getElementById('holidayListContent');
+            const item = document.createElement('div');
+            item.classList.add('holiday-item');
+            item.innerHTML = `<span class="holiday-date">${String(day).padStart(2, '0')}/${String(currentDisplayDate.getMonth() + 1).padStart(2, '0')}</span> <span>${name}</span>`;
+            holidayListContent.appendChild(item);
         }
 
         function changeMonth(offset) {
