@@ -5,44 +5,140 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Minha Escala 3x3</title>
+    <title>Escala 3x3 - Premium</title>
     <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; background-color: #f4f4f9; margin: 0; padding-top: 20px; padding-bottom: 40px; }
-        .calendar-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 320px; box-sizing: border-box; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
-        .day { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-weight: bold; border: 1px solid #ddd; box-sizing: border-box; cursor: pointer; }
-        .weekday { font-size: 0.8rem; color: #666; border: none; font-weight: normal; cursor: default; }
-        
-        /* Cores da Escala */
-        .work { background-color: #2ecc71; color: white; border-color: #27ae60; }
-        .off { background-color: #e74c3c; color: white; border-color: #c0392b; }
-        
-        /* Cores dos Feriados */
-        .holiday-work { background-color: #9b59b6; color: white; border-color: #8e44ad; }
-        .holiday-off { background-color: #f1c40f; color: black; border-color: #f39c12; }
-        
-        .empty { border: none; cursor: default; }
-        .legend-container, .holiday-list-container { margin-top: 20px; width: 320px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .legend-row { display: flex; justify-content: space-around; margin-bottom: 10px; }
-        .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.85rem; }
-        .box { width: 14px; height: 14px; border-radius: 3px; }
-        
-        .holiday-list-container h4 { margin: 0 0 10px 0; font-size: 0.9rem; color: #333; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        .holiday-item { font-size: 0.85rem; margin-bottom: 5px; color: #555; display: flex; gap: 8px; }
-        .holiday-date { font-weight: bold; color: #3498db; min-width: 45px; }
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #2d3436;
+            --text-soft: #636e72;
+            --color-work: #ffffff; /* Neutro */
+            --color-off: #d4edda;  /* Verde Suave */
+            --color-off-text: #155724;
+            --color-holiday-work: #f3e5f5; /* Roxo suave para trabalho no feriado */
+            --color-holiday-work-text: #4a148c;
+            --color-holiday-off: #fff9c4; /* Dourado para folga no feriado */
+            --color-holiday-off-text: #856404;
+            --accent: #0984e3;
+        }
 
-        button { cursor: pointer; padding: 8px 15px; border: none; background: #3498db; color: white; border-radius: 4px; font-weight: bold; }
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            background-color: var(--bg-color); 
+            margin: 0; 
+            padding: 20px 10px;
+            color: var(--text-main);
+        }
+
+        .calendar-container { 
+            background: var(--card-bg); 
+            padding: 20px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+            width: 100%;
+            max-width: 340px; 
+            box-sizing: border-box; 
+        }
+
+        .header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 25px; 
+        }
+
+        .header h3 { font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0; }
+
+        .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+
+        .day { 
+            width: 100%; 
+            aspect-ratio: 1; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 10px; 
+            font-weight: 600; 
+            font-size: 0.95rem;
+            border: 1px solid #edf2f7; 
+            transition: transform 0.1s;
+        }
+
+        .day:active { transform: scale(0.95); }
+
+        .weekday { font-size: 0.75rem; color: var(--text-soft); border: none; font-weight: 500; text-transform: uppercase; }
+        
+        /* Aplicação das Cores Premium */
+        .work { background-color: var(--color-work); color: var(--text-main); }
+        .off { background-color: var(--color-off); color: var(--color-off-text); border-color: #c3e6cb; }
+        .holiday-work { background-color: var(--color-holiday-work); color: var(--color-holiday-work-text); border-color: #d1c4e9; }
+        .holiday-off { background-color: var(--color-holiday-off); color: var(--color-holiday-off-text); border-color: #ffe082; }
+        
+        .empty { border: none; }
+
+        .legend-container { 
+            margin-top: 20px; 
+            width: 100%;
+            max-width: 340px; 
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .legend-item { 
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 0.75rem; 
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .box { width: 14px; height: 14px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05); }
+
+        .holiday-list-container { 
+            margin-top: 20px; 
+            width: 100%;
+            max-width: 340px; 
+            background: #fff; 
+            padding: 15px; 
+            border-radius: 12px; 
+        }
+
+        .holiday-list-container h4 { margin: 0 0 12px 0; font-size: 0.85rem; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.5px; }
+        .holiday-item { font-size: 0.85rem; padding: 8px 0; border-bottom: 1px solid #f1f1f1; display: flex; align-items: center; gap: 10px; }
+        .holiday-item:last-child { border-bottom: none; }
+        .holiday-date { font-weight: bold; color: var(--accent); background: #e1f5fe; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; }
+
+        button { 
+            cursor: pointer; 
+            width: 36px;
+            height: 36px;
+            border: none; 
+            background: #f1f3f5; 
+            color: var(--text-main); 
+            border-radius: 50%; 
+            font-weight: bold; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
 
-    <h2 style="margin-bottom: 10px;">Escala Lallemand 3x3</h2>
+    <h2 style="font-size: 1.4rem; margin-bottom: 20px;">Escala Lallemand</h2>
 
     <div class="calendar-container">
         <div class="header">
             <button onclick="changeMonth(-1)">❮</button>
-            <h3 id="monthTitle" style="margin: 0;">Maio 2026</h3>
+            <h3 id="monthTitle">Maio 2026</h3>
             <button onclick="changeMonth(1)">❯</button>
         </div>
 
@@ -58,17 +154,13 @@
     </div>
 
     <div class="legend-container">
-        <div class="legend-row">
-            <div class="legend-item"><div class="box work"></div> Trabalho</div>
-            <div class="legend-item"><div class="box off"></div> Folga</div>
-        </div>
-        <div class="legend-row">
-            <div class="legend-item"><div class="box holiday-work"></div> Feriado (Trabalho)</div>
-            <div class="legend-item"><div class="box holiday-off"></div> Feriado (Folga)</div>
-        </div>
+        <div class="legend-item"><div class="box work" style="border: 1px solid #ddd;"></div> Trabalho</div>
+        <div class="legend-item"><div class="box off"></div> Folga</div>
+        <div class="legend-item"><div class="box holiday-work"></div> Feriado (Trab)</div>
+        <div class="legend-item"><div class="box holiday-off"></div> Feriado (Folga)</div>
     </div>
 
-    <div class="holiday-list-container" id="holidayListSection" style="display: none;">
+    <div class="holiday-list-container" id="holidayListSection">
         <h4>Feriados do Mês</h4>
         <div id="holidayListContent"></div>
     </div>
@@ -77,7 +169,6 @@
         const startDate = new Date(2026, 4, 9); 
         let currentDisplayDate = new Date(2026, 4, 1);
 
-        // Objeto de Feriados: Chave é "MM-DD", Valor é o Nome
         const feriados = {
             "01-01": "Confraternização Universal",
             "02-17": "Carnaval",
