@@ -5,25 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Escala 3x3 - Premium</title>
+    <title>Escala Lallemand - Dark</title>
     <style>
         :root {
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-main: #2d3436;
-            --text-soft: #636e72;
-            --color-work: #ffffff; /* Neutro */
-            --color-off: #d4edda;  /* Verde Suave */
-            --color-off-text: #155724;
-            --color-holiday-work: #f3e5f5; /* Roxo suave para trabalho no feriado */
-            --color-holiday-work-text: #4a148c;
-            --color-holiday-off: #fff9c4; /* Dourado para folga no feriado */
-            --color-holiday-off-text: #856404;
-            --accent: #0984e3;
+            /* Fundo True Black para telas OLED */
+            --bg-color: #000000;
+            /* Cinza escuro padrão da Apple para cartões */
+            --card-bg: #1c1c1e;
+            --text-main: #f2f2f7;
+            --text-soft: #ebebf5;
+            
+            /* Cores da Escala */
+            --color-work: #2c2c2e; /* Cinza sutil (Neutro) */
+            --border-work: #38383a;
+            
+            --color-off: #32d74b;  /* Verde vibrante iOS */
+            --color-off-text: #000000;
+            
+            --color-holiday-work: #5e5ce6; /* Indigo iOS */
+            --color-holiday-work-text: #ffffff;
+            
+            --color-holiday-off: #ffd60a; /* Amarelo iOS */
+            --color-holiday-off-text: #000000;
+            
+            --accent: #0a84ff; /* Azul iOS para links/destaques */
         }
 
         body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
@@ -36,8 +45,7 @@
         .calendar-container { 
             background: var(--card-bg); 
             padding: 20px; 
-            border-radius: 16px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+            border-radius: 18px; 
             width: 100%;
             max-width: 340px; 
             box-sizing: border-box; 
@@ -50,7 +58,7 @@
             margin-bottom: 25px; 
         }
 
-        .header h3 { font-size: 1.2rem; font-weight: 700; color: var(--text-main); margin: 0; }
+        .header h3 { font-size: 1.2rem; font-weight: 600; color: var(--text-main); margin: 0; letter-spacing: 0.5px;}
 
         .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
 
@@ -63,19 +71,18 @@
             border-radius: 10px; 
             font-weight: 600; 
             font-size: 0.95rem;
-            border: 1px solid #edf2f7; 
             transition: transform 0.1s;
         }
 
-        .day:active { transform: scale(0.95); }
+        .day:active { transform: scale(0.92); }
 
-        .weekday { font-size: 0.75rem; color: var(--text-soft); border: none; font-weight: 500; text-transform: uppercase; }
+        .weekday { font-size: 0.75rem; color: #8e8e93; border: none; font-weight: 500; text-transform: uppercase; }
         
-        /* Aplicação das Cores Premium */
-        .work { background-color: var(--color-work); color: var(--text-main); }
-        .off { background-color: var(--color-off); color: var(--color-off-text); border-color: #c3e6cb; }
-        .holiday-work { background-color: var(--color-holiday-work); color: var(--color-holiday-work-text); border-color: #d1c4e9; }
-        .holiday-off { background-color: var(--color-holiday-off); color: var(--color-holiday-off-text); border-color: #ffe082; }
+        /* Aplicação das Cores Premium Dark */
+        .work { background-color: var(--color-work); color: var(--text-main); border: 1px solid var(--border-work); }
+        .off { background-color: var(--color-off); color: var(--color-off-text); border: none; }
+        .holiday-work { background-color: var(--color-holiday-work); color: var(--color-holiday-work-text); border: none; }
+        .holiday-off { background-color: var(--color-holiday-off); color: var(--color-holiday-off-text); border: none; }
         
         .empty { border: none; }
 
@@ -89,51 +96,55 @@
         }
 
         .legend-item { 
-            background: white;
+            background: var(--card-bg);
             padding: 10px;
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex; 
             align-items: center; 
             gap: 8px; 
             font-size: 0.75rem; 
             font-weight: 600;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            color: var(--text-main);
         }
 
-        .box { width: 14px; height: 14px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05); }
+        .box { width: 14px; height: 14px; border-radius: 4px; }
 
         .holiday-list-container { 
             margin-top: 20px; 
             width: 100%;
             max-width: 340px; 
-            background: #fff; 
+            background: var(--card-bg); 
             padding: 15px; 
-            border-radius: 12px; 
+            border-radius: 16px; 
+            box-sizing: border-box;
         }
 
-        .holiday-list-container h4 { margin: 0 0 12px 0; font-size: 0.85rem; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.5px; }
-        .holiday-item { font-size: 0.85rem; padding: 8px 0; border-bottom: 1px solid #f1f1f1; display: flex; align-items: center; gap: 10px; }
+        .holiday-list-container h4 { margin: 0 0 12px 0; font-size: 0.85rem; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; }
+        .holiday-item { font-size: 0.85rem; padding: 8px 0; border-bottom: 1px solid var(--border-work); display: flex; align-items: center; gap: 10px; color: var(--text-main);}
         .holiday-item:last-child { border-bottom: none; }
-        .holiday-date { font-weight: bold; color: var(--accent); background: #e1f5fe; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; }
+        .holiday-date { font-weight: bold; color: var(--bg-color); background: var(--accent); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; }
 
         button { 
             cursor: pointer; 
             width: 36px;
             height: 36px;
             border: none; 
-            background: #f1f3f5; 
-            color: var(--text-main); 
+            background: #2c2c2e; 
+            color: var(--accent); 
             border-radius: 50%; 
-            font-weight: bold; 
+            font-size: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: background 0.2s;
         }
+        
+        button:active { background: #3a3a3c; }
     </style>
 </head>
 <body>
 
-    <h2 style="font-size: 1.4rem; margin-bottom: 20px;">Escala Lallemand</h2>
+    <h2 style="font-size: 1.4rem; margin-bottom: 20px; letter-spacing: 0.5px;">Escala Lallemand</h2>
 
     <div class="calendar-container">
         <div class="header">
@@ -154,7 +165,7 @@
     </div>
 
     <div class="legend-container">
-        <div class="legend-item"><div class="box work" style="border: 1px solid #ddd;"></div> Trabalho</div>
+        <div class="legend-item"><div class="box work" style="border: 1px solid #48484a;"></div> Trabalho</div>
         <div class="legend-item"><div class="box off"></div> Folga</div>
         <div class="legend-item"><div class="box holiday-work"></div> Feriado (Trab)</div>
         <div class="legend-item"><div class="box holiday-off"></div> Feriado (Folga)</div>
@@ -175,9 +186,9 @@
             "04-03": "Paixão de Cristo",
             "04-21": "Tiradentes",
             "05-01": "Dia do Trabalhador",
-            "05-24": "Aniversário de Patos de Minas",
+            "05-24": "Aniversário de Patos",
             "06-04": "Corpus Christi",
-            "06-13": "Santo Antônio (Padroeiro)",
+            "06-13": "Santo Antônio",
             "09-07": "Independência do Brasil",
             "10-12": "Nossa Senhora Aparecida",
             "11-02": "Finados",
